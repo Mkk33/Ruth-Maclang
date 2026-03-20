@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOVIQ SEO & GEO Visibility Report</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --ink: #152033;
+      --muted: #5d6b82;
+      --line: #e5ebf3;
+      --accent: #2563eb;
+      --accent-soft: #eaf1ff;
+      --success: #15803d;
+      --warning: #b45309;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 20px 72px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #172554 55%, #1d4ed8 100%);
+      color: #fff;
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.09);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.12);
+      padding: 8px 12px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    h1, h2, h3 { margin: 0 0 12px; line-height: 1.15; }
+    h1 { font-size: 42px; max-width: 760px; }
+    h2 { font-size: 28px; }
+    h3 { font-size: 20px; }
+    p { margin: 0 0 14px; color: var(--muted); }
+
+    .hero p {
+      color: rgba(255,255,255,.88);
+      max-width: 820px;
+      font-size: 17px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .meta .chip, .pill {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.16);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+    }
+
+    .section {
+      margin-top: 28px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-head p { max-width: 780px; }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .stat {
+      background: #fbfcff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .stat .sub {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: #fbfcff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    ul { margin: 0; padding-left: 18px; color: var(--ink); }
+    li { margin: 0 0 10px; }
+    strong { color: var(--ink); }
+
+    .kicker {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 8px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .scoreband {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .scoreband .pill {
+      color: var(--ink);
+      background: #f8fafc;
+      border: 1px solid var(--line);
+    }
+
+    .pill.green { color: var(--success); background: #effcf3; border-color: #b7e4c7; }
+    .pill.gold { color: var(--warning); background: #fff7ed; border-color: #fed7aa; }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    figure {
+      margin: 0;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #edf2f7;
+      cursor: zoom-in;
+      transition: opacity 0.15s;
+    }
+
+    figure img:hover { opacity: 0.88; }
+
+    figcaption {
+      padding: 14px 16px 16px;
+      font-size: 14px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+    }
+
+    /* Lightbox */
+    #lb-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      cursor: zoom-out;
+    }
+    #lb-overlay.open { display: flex; }
+    #lb-overlay img {
+      max-width: 100%;
+      max-height: 92vh;
+      border-radius: 12px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      cursor: default;
+    }
+    #lb-close {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      color: #fff;
+      font-size: 32px;
+      line-height: 1;
+      cursor: pointer;
+      opacity: 0.7;
+      background: none;
+      border: none;
+      padding: 4px 10px;
+    }
+    #lb-close:hover { opacity: 1; }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .timeline .step {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .step .num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid #c7d7ff;
+    }
+
+    .quote {
+      font-size: 18px;
+      color: var(--ink);
+      background: #f8fbff;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--accent);
+      padding: 18px 18px 18px 20px;
+      border-radius: 14px;
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .full-width figure { margin-top: 16px; }
+
+    @media (max-width: 960px) {
+      .grid.stats,
+      .two-col,
+      .image-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { font-size: 34px; }
+      .hero { padding: 28px; }
+      .section { padding: 22px; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .wrap { max-width: none; padding: 0; }
+      .hero, .section, figure { box-shadow: none; }
+      .section { break-inside: avoid; }
+      figure { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">NOVIQ Visibility Report</div>
+      <h1>SEO + GEO Visibility Report for noviq.com</h1>
+      <p>
+        This report summarizes the SEO and Generative Engine Optimization work completed to improve NOVIQ's visibility in Google and AI-driven discovery platforms, strengthen website legitimacy through Google Business Profile, and support long-term authority growth through ongoing content and backlink-building activity.
+      </p>
+      <div class="meta">
+        <div class="chip">Prepared by StreamLab AI</div>
+        <div class="chip">Source: Wix SEO & GEO dashboard screenshots</div>
+        <div class="chip">Date captured: Mar 20, 2026</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Executive Summary</div>
+          <h2>What was done</h2>
+          <p>
+            SEO and GEO work was carried out to help noviq.com rank better, appear more often in AI-generated answers, and build a stronger trust footprint online. The work included website optimization, AI visibility setup, Google Business Profile verification for legitimacy, and ongoing content support to strengthen topical authority and generate backlink opportunities.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid stats">
+        <div class="stat">
+          <div class="label">ChatGPT visibility score</div>
+          <div class="value">16%</div>
+          <div class="sub">From Wix AI Visibility Overview</div>
+        </div>
+        <div class="stat">
+          <div class="label">User queries on AI</div>
+          <div class="value">628</div>
+          <div class="sub">Up 129% in the last 30 days</div>
+        </div>
+        <div class="stat">
+          <div class="label">Google impressions</div>
+          <div class="value">583</div>
+          <div class="sub">Tracked in the last 7 days</div>
+        </div>
+        <div class="stat">
+          <div class="label">Google clicks</div>
+          <div class="value">13</div>
+          <div class="sub">Tracked in the last 7 days</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Work Delivered</div>
+          <h2>SEO, GEO, legitimacy, and authority building</h2>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h3>SEO work completed</h3>
+          <ul>
+            <li><strong>On-site SEO setup and optimization</strong> to improve crawlability, structure, and search readiness.</li>
+            <li><strong>Google Search Console-connected visibility monitoring</strong> through the Wix SEO dashboard.</li>
+            <li><strong>Page and content support</strong> to help NOVIQ rank for relevant industry and service-related searches.</li>
+            <li><strong>Ongoing content publishing support</strong> to increase indexable content and widen the website's discoverability footprint.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>GEO work completed</h3>
+          <ul>
+            <li><strong>AI-search visibility work</strong> so NOVIQ can be surfaced by platforms like ChatGPT, Gemini, Perplexity, and Claude.</li>
+            <li><strong>Entity and brand clarity improvements</strong> so AI systems can better interpret what NOVIQ does.</li>
+            <li><strong>Query-aligned content framing</strong> to help the website appear in generative answers, not just traditional search results.</li>
+            <li><strong>Ongoing content assistance</strong> that supports citations, references, and future backlink growth.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="two-col" style="margin-top:18px;">
+        <div class="card">
+          <h3>Google Business Profile added for legitimacy</h3>
+          <p>
+            A verified Google Business Profile was added for NOVIQ. This strengthens brand legitimacy, improves trust signals, and supports entity validation across Google and AI systems.
+          </p>
+          <div class="scoreband">
+            <span class="pill green">Verified business profile</span>
+            <span class="pill">Service area: San Diego, CA, USA</span>
+            <span class="pill">5 reviews</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Content supports backlink growth</h3>
+          <p>
+            Ongoing content work helps expand the website's authority footprint over time. New content creates more opportunities for indexing, references, and backlinks, which support both classic SEO performance and AI visibility.
+          </p>
+          <div class="scoreband">
+            <span class="pill gold">Long-term authority play</span>
+            <span class="pill">Supports search + AI discovery</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section full-width">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Performance Snapshot</div>
+          <h2>Current visibility indicators</h2>
+          <p>
+            Based on the Wix SEO & GEO dashboard screenshots provided, NOVIQ has measurable visibility in both traditional search and AI search environments.
+          </p>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h3>What the numbers show</h3>
+          <ul>
+            <li><strong>ChatGPT visibility score:</strong> 16%</li>
+            <li><strong>AI user queries by page:</strong> 628 total, with the homepage leading exposure</li>
+            <li><strong>Google performance:</strong> 583 impressions and 13 clicks in the last 7 days</li>
+            <li><strong>Setup checklist:</strong> 98% complete in Wix SEO Assistant</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>What this means</h3>
+          <ul>
+            <li>NOVIQ is already being recognized by AI systems.</li>
+            <li>The website has an active visibility footprint beyond just branded search.</li>
+            <li>The foundation work is in place, but more content and authority signals are needed to win more non-branded, money-intent queries.</li>
+          </ul>
+        </div>
+      </div>
+
+      <figure>
+        <img src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-seo-report/seo-geo-dashboard.png" alt="Wix SEO and GEO dashboard for NOVIQ showing impressions, clicks, AI visibility and setup completion" />
+        <figcaption>
+          Source screenshot: Wix SEO & GEO dashboard showing Google performance, AI query growth, ChatGPT visibility score, and high completion of the SEO setup checklist.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="kicker">AI Visibility</div>
+          <h2>How NOVIQ is showing up in generative search</h2>
+          <p>
+            GEO work aims to help NOVIQ become part of AI-generated answers. The screenshots show that the website is already visible in AI systems, but there is still room to expand coverage for broader and higher-intent queries.
+          </p>
+        </div>
+      </div>
+
+      <div class="quote">
+        NOVIQ is already registering a ChatGPT visibility score of 16%, with AI user queries growing strongly. This shows the website is no longer invisible to AI systems.
+      </div>
+
+      <div class="image-grid">
+        <figure>
+          <img src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-seo-report/ai-visibility-overview.png" alt="AI Visibility Overview screen for NOVIQ in Wix" />
+          <figcaption>
+            Source screenshot: AI Visibility Overview showing ChatGPT at 16%, Gemini at 15%, and Perplexity at 15%.
+          </figcaption>
+        </figure>
+        <figure>
+          <img src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-seo-report/seo-dashboard-detail.png" alt="Wix SEO dashboard detail showing performance over time, AI queries by page, and ChatGPT visibility score" />
+          <figcaption>
+            Source screenshot: Wix SEO dashboard detail showing performance over time, most significant changes, and ChatGPT visibility score of 16%.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Competitive Context</div>
+          <h2>NOVIQ is already competitive in AI visibility</h2>
+          <p>
+            The competitor visibility screen shows NOVIQ tied at the top of the listed group. That does not mean the work is finished. It means the foundation is working and the next push should focus on increasing coverage for non-branded and transactional queries.
+          </p>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h3>Competitive reading</h3>
+          <ul>
+            <li><strong>NOVIQ:</strong> 16%</li>
+            <li><strong>Stay San Diego:</strong> 16%</li>
+            <li><strong>West Coast Home Stays:</strong> 5%</li>
+            <li><strong>AvantStay:</strong> 0%</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Interpretation</h3>
+          <ul>
+            <li>NOVIQ is not starting from zero.</li>
+            <li>The site already has a measurable AI visibility footprint.</li>
+            <li>Further content and authority work can push the site into more query sets and increase total mentions.</li>
+          </ul>
+        </div>
+      </div>
+
+      <figure>
+        <img src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-seo-report/ai-visibility-competitors.png" alt="Competitors by visibility score showing NOVIQ tied for first" />
+        <figcaption>
+          Source screenshot: Competitors by visibility score showing NOVIQ tied at 16% with Stay San Diego in the displayed set.
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Brand Positioning</div>
+          <h2>AI understands the NOVIQ brand positively</h2>
+          <p>
+            The dashboard shows a positive general sentiment and a brand description that frames NOVIQ as a modern, data-driven company. That is a direct reflection of better website clarity and positioning.
+          </p>
+        </div>
+      </div>
+
+      <div class="image-grid">
+        <figure>
+          <img src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-seo-report/brand-perception.png" alt="Brand perception screen showing positive sentiment for NOVIQ" />
+          <figcaption>
+            Source screenshot: Brand perception panel showing positive sentiment and AI-generated understanding of NOVIQ's positioning.
+          </figcaption>
+        </figure>
+        <figure>
+          <img src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-seo-report/google-business-profile.png" alt="Google Business Profile Manager showing NOVIQ verified" />
+          <figcaption>
+            Source screenshot: Google Business Profile Manager showing NOVIQ as verified, supporting trust and legitimacy signals.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Recommended Readout</div>
+          <h2>Suggested summary language for client or internal reporting</h2>
+        </div>
+      </div>
+
+      <div class="card">
+        <p style="color:var(--ink); font-size:16px;">
+          We carried out SEO and GEO work on noviq.com to improve the website's ability to rank in search, appear in AI-generated responses, and build stronger legitimacy online. This included foundational website optimization, AI visibility improvements, adding and verifying the Google Business Profile, and supporting ongoing content efforts that contribute to authority growth and backlink opportunities. Based on the current Wix dashboard data, NOVIQ is already showing measurable visibility in Google and AI platforms, with a 16% ChatGPT visibility score, 628 AI user queries by page, and active Google impressions and clicks. The foundation is in place, and continued content and authority work should improve non-branded visibility over time.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Next Phase</div>
+          <h2>What should happen next</h2>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="step">
+          <div class="num">1</div>
+          <div class="card">
+            <h3>Expand content around money-intent queries</h3>
+            <p>Create or refine pages and articles tied to service-driven, non-branded searches that AI systems and Google are likely to surface.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div class="card">
+            <h3>Continue GEO-focused content formatting</h3>
+            <p>Make content more citation-friendly, direct, structured, and context-rich so it performs better in AI answers.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div class="card">
+            <h3>Strengthen backlink and authority signals</h3>
+            <p>Use ongoing content, mentions, partnerships, and supporting assets to increase references to noviq.com from other sources.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">4</div>
+          <div class="card">
+            <h3>Monitor score improvements over time</h3>
+            <p>Keep tracking Google impressions, clicks, AI visibility score, mention rates, and branded vs. non-branded query performance.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Note: This report uses the screenshots supplied from the Wix dashboard as the evidence base for the current score and visibility snapshots.
+      </div>
+    </section>
+  </div>
+
+  <!-- Lightbox overlay -->
+  <div id="lb-overlay" onclick="closeLB(event)">
+    <button id="lb-close" onclick="document.getElementById('lb-overlay').classList.remove('open')">&#x2715;</button>
+    <img id="lb-img" src="" alt="" />
+  </div>
+
+  <script>
+    document.querySelectorAll('figure img').forEach(function(img) {
+      img.addEventListener('click', function() {
+        document.getElementById('lb-img').src = this.src;
+        document.getElementById('lb-img').alt = this.alt;
+        document.getElementById('lb-overlay').classList.add('open');
+      });
+    });
+    function closeLB(e) {
+      if (e.target === document.getElementById('lb-overlay')) {
+        document.getElementById('lb-overlay').classList.remove('open');
+      }
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') document.getElementById('lb-overlay').classList.remove('open');
+    });
+  </script>
+</body>
+</html>
