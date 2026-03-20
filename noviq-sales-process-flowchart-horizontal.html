@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVIQ Sales Process</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0f1117;
+    color: #e2e8f0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding: 40px 24px;
+    overflow-x: auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+  }
+
+  header p {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  .hint {
+    text-align: center;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: #475569;
+  }
+
+  .hint span {
+    border: 1px solid #2d3748;
+    border-radius: 6px;
+    padding: 4px 12px;
+    display: inline-block;
+  }
+
+  /* HORIZONTAL FLOW ROW */
+  .flow-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-width: max-content;
+    margin: 0 auto;
+    gap: 0;
+  }
+
+  /* STEP COLUMN */
+  .step-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 140px;
+    flex-shrink: 0;
+  }
+
+  /* NODE BOX */
+  .node {
+    width: 140px;
+    background: #1e2330;
+    border: 1.5px solid #2d3748;
+    border-radius: 10px;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+    text-align: center;
+  }
+
+  .node:hover {
+    border-color: #4ade80;
+    background: #1a2d1e;
+  }
+
+  .node.open {
+    border-color: #4ade80;
+    background: #1a2d1e;
+  }
+
+  .step-col.milestone .node:hover,
+  .step-col.milestone .node.open {
+    border-color: #facc15;
+    background: #1e1d12;
+  }
+
+  .step-number {
+    background: #4ade80;
+    color: #0f1117;
+    font-weight: 800;
+    font-size: 12px;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    flex-shrink: 0;
+  }
+
+  .step-col.milestone .step-number {
+    background: #facc15;
+  }
+
+  .node h2 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #f1f5f9;
+    line-height: 1.35;
+  }
+
+  .node .subtitle {
+    font-size: 10px;
+    color: #64748b;
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  .milestone-badge {
+    display: inline-block;
+    background: #facc1520;
+    border: 1px solid #facc15;
+    color: #facc15;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 20px;
+    margin-top: 5px;
+    letter-spacing: 0.04em;
+  }
+
+  .chevron-down {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #475569;
+    transition: transform 0.25s;
+  }
+
+  .node.open .chevron-down {
+    transform: rotate(180deg);
+  }
+
+  /* HORIZONTAL CONNECTOR */
+  .connector-h {
+    display: flex;
+    align-items: center;
+    height: 28px; /* same as step-number top offset region */
+    margin-top: 0;
+    flex-shrink: 0;
+    /* vertically align with node center — node is ~120px, number is at top */
+    padding-top: 14px; /* nudge arrow to align with middle of step number */
+  }
+
+  .connector-h .line-h {
+    width: 28px;
+    height: 2px;
+    background: #2d3748;
+  }
+
+  .connector-h .arrow-h {
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid #2d3748;
+  }
+
+  /* DETAIL PANEL — appears below the full row */
+  .detail-area {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .detail-panel {
+    display: none;
+    background: #141820;
+    border: 1.5px solid #4ade80;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #cbd5e1;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .detail-panel.milestone-panel {
+    border-color: #facc15;
+  }
+
+  .detail-panel.open {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .panel-step-num {
+    background: #4ade80;
+    color: #0f1117;
+    font-weight: 800;
+    font-size: 14px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .milestone-panel .panel-step-num {
+    background: #facc15;
+  }
+
+  .panel-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+
+  .panel-header .panel-sub {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 2px;
+  }
+
+  .panel-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .panel-section h3 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #4ade80;
+    margin-bottom: 8px;
+  }
+
+  .milestone-panel .panel-section h3 {
+    color: #facc15;
+  }
+
+  .panel-section ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .panel-section ul li {
+    padding: 2px 0 2px 14px;
+    position: relative;
+    color: #94a3b8;
+    font-size: 13px;
+  }
+
+  .panel-section ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: #334155;
+    font-size: 11px;
+    top: 5px;
+  }
+
+  .panel-section p {
+    font-size: 13px;
+    color: #94a3b8;
+  }
+
+  .highlight {
+    background: #1e3a25;
+    border-left: 3px solid #4ade80;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 10px;
+    font-style: italic;
+    color: #86efac;
+    font-size: 13px;
+  }
+
+  .milestone-panel .highlight {
+    background: #2a2412;
+    border-color: #facc15;
+    color: #fde68a;
+  }
+
+  .tag {
+    display: inline-block;
+    background: #1e3a25;
+    color: #4ade80;
+    border: 1px solid #166534;
+    border-radius: 4px;
+    font-size: 11px;
+    padding: 2px 8px;
+    margin: 2px 3px 2px 0;
+    font-weight: 600;
+  }
+
+  .milestone-panel .tag {
+    background: #2a2412;
+    color: #facc15;
+    border-color: #854d0e;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>NOVIQ Sales Process</h1>
+  <p>Evan / NOVIQ Property Rentals — end-to-end deal flow</p>
+</header>
+
+<div class="hint"><span>Click any step to expand details</span></div>
+
+<!-- HORIZONTAL FLOW -->
+<div class="flow-row">
+
+  <!-- Step 1 -->
+  <div class="step-col" id="col-s1">
+    <div class="node" onclick="toggle('s1', false)" id="node-s1">
+      <div class="step-number">1</div>
+      <h2>Lead Intake</h2>
+      <div class="subtitle">4 sources → book a call</div>
+      <div class="chevron-down">▼</div>
+    </div>
+  </div>
+
+  <div class="connector-h"><div class="line-h"></div><div class="arrow-h"></div></div>
+
+  <!-- Step 2 -->
+  <div class="step-col" id="col-s2">
+    <div class="node" onclick="toggle('s2', false)" id="node-s2">
+      <div class="step-number">2</div>
+      <h2>Pre-Call Prep</h2>
+      <div class="subtitle">Light research only</div>
+      <div class="chevron-down">▼</div>
+    </div>
+  </div>
+
+  <div class="connector-h"><div class="line-h"></div><div class="arrow-h"></div></div>
+
+  <!-- Step 3 — MILESTONE -->
+  <div class="step-col milestone" id="col-s3">
+    <div class="node" onclick="toggle('s3', true)" id="node-s3">
+      <div class="step-number">3</div>
+      <h2>Discovery Zoom</h2>
+      <div class="subtitle">Identify pain, secure walkthrough</div>
+      <div class="milestone-badge">CONVERSION 1</div>
+      <div class="chevron-down">▼</div>
+    </div>
+  </div>
+
+  <div class="connector-h"><div class="line-h"></div><div class="arrow-h"></div></div>
+
+  <!-- Step 4 — MILESTONE -->
+  <div class="step-col milestone" id="col-s4">
+    <div class="node" onclick="toggle('s4', true)" id="node-s4">
+      <div class="step-number">4</div>
+      <h2>Property Walkthrough</h2>
+      <div class="subtitle">Where the deal gets real</div>
+      <div class="milestone-badge">CONVERSION 2</div>
+      <div class="chevron-down">▼</div>
+    </div>
+  </div>
+
+  <div class="connector-h"><div class="line-h"></div><div class="arrow-h"></div></div>
+
+  <!-- Step 5 -->
+  <div class="step-col" id="col-s5">
+    <div class="node" onclick="toggle('s5', false)" id="node-s5">
+      <div class="step-number">5</div>
+      <h2>Underwriting</h2>
+      <div class="subtitle">Conditional — warm deals only</div>
+      <div class="chevron-down">▼</div>
+    </div>
+  </div>
+
+  <div class="connector-h"><div class="line-h"></div><div class="arrow-h"></div></div>
+
+  <!-- Step 6 — MILESTONE -->
+  <div class="step-col milestone" id="col-s6">
+    <div class="node" onclick="toggle('s6', true)" id="node-s6">
+      <div class="step-number">6</div>
+      <h2>Contract Signing Zoom</h2>
+      <div class="subtitle">Dedicated close call</div>
+      <div class="milestone-badge">CLOSE</div>
+      <div class="chevron-down">▼</div>
+    </div>
+  </div>
+
+  <div class="connector-h"><div class="line-h"></div><div class="arrow-h"></div></div>
+
+  <!-- Step 7 -->
+  <div class="step-col" id="col-s7">
+    <div class="node" onclick="toggle('s7', false)" id="node-s7">
+      <div class="step-number">7</div>
+      <h2>Post-Signing Onboarding</h2>
+      <div class="subtitle">Now they're a client</div>
+      <div class="chevron-down">▼</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DETAIL PANELS — render below the flow row -->
+<div class="detail-area">
+
+  <!-- Panel 1 -->
+  <div class="detail-panel" id="panel-s1">
+    <div class="panel-header">
+      <div class="panel-step-num">1</div>
+      <div>
+        <h2>Lead Intake</h2>
+        <div class="panel-sub">Goal: get every viable lead to a discovery call</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section">
+        <h3>Lead Sources</h3>
+        <ul>
+          <li>Warm inbound</li>
+          <li>Cold outbound</li>
+          <li>Referral</li>
+          <li>Other inbound / funnel source</li>
+        </ul>
+      </div>
+      <div class="panel-section">
+        <h3>Collect Before Booking</h3>
+        <ul>
+          <li>Property address</li>
+          <li>Listing links (Airbnb, VRBO, Zillow, etc.)</li>
+          <li>Photos</li>
+          <li>Ownership / decision-maker confirmation</li>
+          <li>Enough info to qualify against NOVIQ's ICP</li>
+        </ul>
+      </div>
+      <div class="panel-section">
+        <h3>Qualification Test — Must Pass All</h3>
+        <ul>
+          <li>Owns the property or controls the decision</li>
+          <li>Property is in a target market / viable use case</li>
+          <li>Enough upside or pain to justify NOVIQ involvement</li>
+          <li>Actually exploring STR / hospitality help — not just curious</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 2 -->
+  <div class="detail-panel" id="panel-s2">
+    <div class="panel-header">
+      <div class="panel-step-num">2</div>
+      <div>
+        <h2>Pre-Call Prep</h2>
+        <div class="panel-sub">Evan or Justin — before every discovery call</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section">
+        <h3>Pain Points to Look For</h3>
+        <ul>
+          <li>Bad photos</li>
+          <li>Missing amenities</li>
+          <li>Poor pricing</li>
+          <li>Bad reviews</li>
+          <li>Poor service / operational issues</li>
+          <li>Owner has no time</li>
+          <li>Underperforming revenue</li>
+          <li>General friction in managing the property</li>
+        </ul>
+      </div>
+      <div class="panel-section">
+        <h3>Rule</h3>
+        <div class="highlight">Do light prep. Understand visible issues. Do NOT build full underwriting upfront — otherwise the team burns time on deals that never move.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 3 -->
+  <div class="detail-panel milestone-panel" id="panel-s3">
+    <div class="panel-header">
+      <div class="panel-step-num">3</div>
+      <div>
+        <h2>Discovery Zoom Call</h2>
+        <div class="panel-sub">First major conversion point — not a deck dump</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section">
+        <h3>Call Objectives</h3>
+        <ul>
+          <li>Understand their pain points</li>
+          <li>Confirm fit</li>
+          <li>Build trust and authority</li>
+          <li>Secure the property walkthrough</li>
+          <li>Gather anything still missing</li>
+        </ul>
+      </div>
+      <div class="panel-section">
+        <h3>Power Question</h3>
+        <div class="highlight">"What made you book the call today?" — reveals urgency and pain fast. (Justin's question)</div>
+        <h3 style="margin-top: 16px;">Deck Usage</h3>
+        <ul>
+          <li>Use live during the call if helpful</li>
+          <li>Can send after as reference</li>
+          <li>Never send cold — most won't review it</li>
+        </ul>
+      </div>
+      <div class="panel-section">
+        <h3>Collect Before Ending</h3>
+        <ul>
+          <li>Property walkthrough scheduled</li>
+          <li>Missing property links / photos</li>
+          <li>Any missing business context</li>
+          <li>P&Ls (optional — not required yet)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 4 -->
+  <div class="detail-panel milestone-panel" id="panel-s4">
+    <div class="panel-header">
+      <div class="panel-step-num">4</div>
+      <div>
+        <h2>Property Walkthrough</h2>
+        <div class="panel-sub">Second major conversion point — this is where the deal gets real</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section">
+        <h3>Walkthrough Goals</h3>
+        <ul>
+          <li>See the asset in person</li>
+          <li>Confirm operational and design opportunities</li>
+          <li>Align on key deal terms</li>
+          <li>Move the client toward contract signing</li>
+        </ul>
+      </div>
+      <div class="panel-section">
+        <h3>Align On During Walkthrough</h3>
+        <ul>
+          <li>Start date</li>
+          <li>Contract term and renewal structure</li>
+          <li>Management fee</li>
+          <li>Cleaning fees — who receives them</li>
+          <li>Rules / responsibilities</li>
+          <li>Repairs under $500: no permission needed</li>
+          <li>Repairs over $500: owner approval required</li>
+          <li>Preferred handyman / vendor structure</li>
+          <li>Blackout dates / owner-use restrictions</li>
+          <li>Buyout / cancellation provision</li>
+          <li>Schedule contract Zoom before leaving</li>
+        </ul>
+      </div>
+      <div class="panel-section">
+        <h3>Materials to Bring</h3>
+        <div class="tag">Printed contract</div>
+        <div class="tag">1-page services summary</div>
+        <div class="tag">1-page cleaning / inclusions</div>
+        <div class="tag">Onboarding overview (if needed)</div>
+        <div class="highlight">Do NOT show up empty-handed and vague.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 5 -->
+  <div class="detail-panel" id="panel-s5">
+    <div class="panel-header">
+      <div class="panel-step-num">5</div>
+      <div>
+        <h2>Underwriting / Projections</h2>
+        <div class="panel-sub">Conditional — only when the deal is warm enough</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section">
+        <h3>When to Run It</h3>
+        <ul>
+          <li>After discovery, OR</li>
+          <li>Between discovery and walkthrough, OR</li>
+          <li>When the client explicitly asks for projections</li>
+        </ul>
+        <div class="highlight">Do NOT make underwriting an early bottleneck. Light prep first, full underwriting only when the deal is warm.</div>
+      </div>
+      <div class="panel-section">
+        <h3>Asset Needed</h3>
+        <p>A reusable underwriting framework slide where deal-specific numbers can be inserted each time. This was one of Evan's clearest asks.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 6 -->
+  <div class="detail-panel milestone-panel" id="panel-s6">
+    <div class="panel-header">
+      <div class="panel-step-num">6</div>
+      <div>
+        <h2>Contract Review / Signing Zoom</h2>
+        <div class="panel-sub">Dedicated close call — no loose ends</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section">
+        <h3>Why a Dedicated Zoom</h3>
+        <p>Even if they love NOVIQ after the walkthrough, clients usually want time to review the agreement. Assume this step always exists.</p>
+        <div class="highlight">Walkthrough → review agreement → scheduled Zoom to sign.</div>
+      </div>
+      <div class="panel-section">
+        <h3>Best Practice (at the walkthrough)</h3>
+        <ul>
+          <li>Review the contract together</li>
+          <li>Fill in the blanks in person</li>
+          <li>Give them a hard copy before leaving</li>
+          <li>Schedule the contract Zoom before leaving the property</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel 7 -->
+  <div class="detail-panel" id="panel-s7">
+    <div class="panel-header">
+      <div class="panel-step-num">7</div>
+      <div>
+        <h2>Post-Signing Onboarding</h2>
+        <div class="panel-sub">Only after the contract is signed — now they're a client</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="panel-section">
+        <h3>Two Tracks</h3>
+        <a href="https://mkk33.github.io/Ruth-Maclang/onboarding-noviq-v2.html" target="_blank" class="tag" style="text-decoration:none;">Digital onboarding ↗</a>
+        <div class="tag">Physical onboarding</div>
+      </div>
+      <div class="panel-section">
+        <h3>Big Onboarding Deck Covers</h3>
+        <ul>
+          <li>What happens next</li>
+          <li>30 / 60 / 90 day expectations</li>
+          <li>Digital onboarding steps</li>
+          <li>Physical onboarding steps</li>
+          <li>Team responsibilities</li>
+          <li>Launch steps</li>
+        </ul>
+      </div>
+      <div class="panel-section">
+        <h3>Timing</h3>
+        <ul>
+          <li>Usually sent after signing</li>
+          <li>Can be shown earlier if the owner needs more confidence to sign</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let current = null;
+
+  function toggle(id, isMilestone) {
+    const node = document.getElementById('node-' + id);
+    const panel = document.getElementById('panel-' + id);
+    const isOpen = node.classList.contains('open');
+
+    // close all
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('open'));
+    document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('open'));
+    current = null;
+
+    if (!isOpen) {
+      node.classList.add('open');
+      panel.classList.add('open');
+      current = id;
+
+      // scroll panel into view smoothly
+      setTimeout(() => {
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    }
+  }
+</script>
+
+</body>
+</html>
