@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVIQ — Your Discovery Session</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0f1117;
+    color: #e2e8f0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding: 48px 32px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .noviq-logo {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #ffffff;
+    border: 1.5px solid #ffffff;
+    padding: 5px 12px;
+  }
+
+  .top-bar-right {
+    font-size: 12px;
+    color: #475569;
+  }
+
+  h1 {
+    font-size: 38px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.8px;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  .page-sub {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 40px;
+    max-width: 560px;
+    line-height: 1.6;
+  }
+
+  /* INTRO BANNER */
+  .intro-banner {
+    background: #14201a;
+    border: 1.5px solid #4ade80;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 36px;
+  }
+
+  .intro-banner h2 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #4ade80;
+    margin-bottom: 10px;
+  }
+
+  .intro-banner p {
+    font-size: 14.5px;
+    color: #94a3b8;
+    line-height: 1.7;
+  }
+
+  /* SLIDE IMAGES */
+  .slide-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #4ade80;
+    margin-bottom: 10px;
+    margin-top: 32px;
+  }
+
+  .slide-img {
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #1e293b;
+  }
+
+  /* GRID */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    background: #141820;
+    border: 1.5px solid #1e293b;
+    border-radius: 10px;
+    padding: 22px 24px;
+  }
+
+  .card h3 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #4ade80;
+    margin-bottom: 14px;
+  }
+
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .card ul li {
+    padding: 6px 0 6px 18px;
+    position: relative;
+    color: #94a3b8;
+    font-size: 13.5px;
+    line-height: 1.55;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .card ul li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .card ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: #2d3748;
+    font-size: 11px;
+    top: 8px;
+  }
+
+  /* DELIVERABLES GRID */
+  .deliverables-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .deliverable-item {
+    background: #141820;
+    border: 1.5px solid #1e293b;
+    border-radius: 10px;
+    padding: 20px 22px;
+    border-top: 3px solid #4ade80;
+  }
+
+  .deliverable-item h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+  }
+
+  .deliverable-item p {
+    font-size: 12.5px;
+    color: #64748b;
+    line-height: 1.55;
+  }
+
+  /* WHAT HAPPENS NEXT */
+  .next-steps {
+    background: #141820;
+    border: 1.5px solid #1e293b;
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-bottom: 16px;
+  }
+
+  .next-steps h3 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #4ade80;
+    margin-bottom: 18px;
+  }
+
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .step-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .step-dot {
+    width: 28px;
+    height: 28px;
+    background: #1e293b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4ade80;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-row-text strong {
+    display: block;
+    font-size: 13.5px;
+    color: #f1f5f9;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .step-row-text span {
+    font-size: 12.5px;
+    color: #64748b;
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid #1e293b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #334155;
+  }
+
+  @media (max-width: 640px) {
+    .grid-2, .deliverables-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="noviq-logo">NOVIQ</div>
+  <div class="top-bar-right">ecventurescorp.com</div>
+</div>
+
+<h1>Your Discovery Session</h1>
+<p class="page-sub">This is a strategic consultation with Evan Rundle, CEO of NOVIQ — not a sales pitch. We're here to understand your property, identify the opportunity, and show you exactly what's possible.</p>
+
+<!-- INTRO -->
+<div class="intro-banner">
+  <h2>What This Session Is</h2>
+  <p>Before any contract is signed, NOVIQ invests time in a full discovery and pre-design strategic consultation. We analyze your property, your market, and your current situation to determine what the highest and best use of your asset really is — and what revenue is realistically on the table. You walk away with a clear picture regardless of what you decide.</p>
+</div>
+
+<!-- SLIDE 3: WHO WE ARE -->
+<div class="slide-section-label">Who We Are</div>
+<img class="slide-img" src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-discovery/noviq-slide-who-we-are.png" alt="Who We Are — Our Mission and NOVIQ Stats">
+
+<!-- SLIDE 4: ORG CHART -->
+<div class="slide-section-label">Our Team</div>
+<img class="slide-img" src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-discovery/noviq-slide-org-chart.png" alt="NOVIQ Organizational Chart">
+
+<!-- COMM WORKFLOW -->
+<div class="slide-section-label">Communication Workflow</div>
+<img class="slide-img" src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-discovery/noviq-slide-comm-workflow.png" alt="NOVIQ Communication Workflow">
+
+<!-- WHAT WE COVER -->
+<div class="slide-section-label" style="margin-top:32px;">What We'll Cover Together</div>
+<div class="grid-2" style="margin-bottom:16px;">
+  <div class="card">
+    <h3>What We'll Cover Together</h3>
+    <ul>
+      <li>Your property's current performance and potential</li>
+      <li>Where it fits in the short-term rental market</li>
+      <li>Revenue modeling — what you can realistically expect</li>
+      <li>Design and amenity gaps that are costing you bookings</li>
+      <li>How NOVIQ would position and operate your property</li>
+      <li>Any questions you have about co-hosting, fees, or the process</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>What You'll Need to Share</h3>
+    <ul>
+      <li>Property address and any existing listing links</li>
+      <li>Photos of the property (current condition)</li>
+      <li>Your goals — revenue target, involvement level, timeline</li>
+      <li>Any existing vendors, cleaners, or management you're working with</li>
+      <li>Questions or concerns you want answered before moving forward</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SLIDE 7: DISCOVERY/CONSULTATION -->
+<div class="slide-section-label">Discovery and Consultation</div>
+<img class="slide-img" src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-discovery/noviq-slide-discovery-consultation.png" alt="Discovery and Consultation">
+
+<!-- DELIVERABLES -->
+<div class="slide-section-label">What We Deliver From This Session</div>
+<div class="deliverables-grid">
+  <div class="deliverable-item">
+    <h3>Viability and Profitability Study</h3>
+    <p>We assess whether your property is a strong STR candidate and model the realistic revenue ceiling based on your market, location, and property type.</p>
+  </div>
+  <div class="deliverable-item">
+    <h3>Market Positioning Analysis</h3>
+    <p>We look at your comp set — properties similar to yours — and identify where you should be priced and how you should be marketed to win bookings.</p>
+  </div>
+  <div class="deliverable-item">
+    <h3>Highest and Best Use Assessment</h3>
+    <p>We identify how your property should be set up — design, layout, amenities — to maximize revenue per square foot and earn consistent 5-star reviews.</p>
+  </div>
+  <div class="deliverable-item">
+    <h3>Pre-Design Strategic Onboarding Plan</h3>
+    <p>If the numbers work and we're a mutual fit, we outline the design and operational roadmap needed to launch your property the right way.</p>
+  </div>
+</div>
+
+<!-- SLIDE 8: INTERIOR DESIGN -->
+<div class="slide-section-label">Interior Design</div>
+<img class="slide-img" src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-discovery/noviq-slide-interior-design.png" alt="Interior Design">
+
+<!-- SLIDE 11: SERVICES INCLUDED -->
+<div class="slide-section-label">Services Included in Co-Hosting Fee</div>
+<img class="slide-img" src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-discovery/noviq-slide-services.png" alt="Services Included in Co-Hosting Fee">
+
+<!-- SLIDE 12: CLEANING -->
+<div class="slide-section-label">Cleaning</div>
+<img class="slide-img" src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-discovery/noviq-slide-cleaning.png" alt="Cleaning Services">
+
+<!-- SLIDE 13: VISION FOR OUR PARTNERSHIP -->
+<div class="slide-section-label">Vision for Our Partnership</div>
+<img class="slide-img" src="https://raw.githubusercontent.com/Mkk33/Ruth-Maclang/main/noviq-discovery/noviq-slide-vision-partnership.png" alt="Vision for Our Partnership">
+
+<!-- WHAT HAPPENS NEXT -->
+<div class="slide-section-label" style="margin-top:32px;">What Happens After This Call</div>
+<div class="next-steps">
+  <h3>What Happens After This Call</h3>
+  <div class="step-row">
+    <div class="step-dot">1</div>
+    <div class="step-row-text">
+      <strong>You receive the AirDNA projections for your property</strong>
+      <span>Revenue projections specific to your address, based on real market data — so you can evaluate the opportunity on your own terms.</span>
+    </div>
+  </div>
+  <div class="step-row">
+    <div class="step-dot">2</div>
+    <div class="step-row-text">
+      <strong>Property Walkthrough</strong>
+      <span>Evan or a member of the NOVIQ team visits your property in person to confirm the opportunity, assess what's needed, and align on terms.</span>
+    </div>
+  </div>
+  <div class="step-row">
+    <div class="step-dot">3</div>
+    <div class="step-row-text">
+      <strong>Contract Review</strong>
+      <span>You get a copy of the management agreement to review on your own time. No pressure to sign on the spot.</span>
+    </div>
+  </div>
+  <div class="step-row">
+    <div class="step-dot">4</div>
+    <div class="step-row-text">
+      <strong>Signing Zoom — if it's a fit</strong>
+      <span>A dedicated call to go through the agreement together, answer final questions, and move forward as partners.</span>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>NOVIQ Property Rentals — Discovery Session</span>
+  <span>ecventurescorp.com · (323) 205-7222</span>
+</footer>
+
+</body>
+</html>
